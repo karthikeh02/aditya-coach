@@ -1,77 +1,251 @@
 @import "tailwindcss";
 
 /* ============================================================
-   A3. DESIGN SYSTEM — dark + gold luxury (tokens shipped verbatim)
+   LAYER 1 — THE BRAND PALETTE.  THIS IS THE ONLY BLOCK YOU EDIT.
+   ------------------------------------------------------------
+   Twelve values per theme. Everything else in this file — every
+   surface, hairline, gold step, shadow, glow and gradient — is
+   DERIVED from these with color-mix(). Change a value here and
+   the whole site follows. Nothing below needs touching.
+
+   Themes resolve in this order:
+     :root                 -> dark (the site default)
+     [data-theme="light"]  -> light
+
+   These are inherited custom properties, so putting data-theme on
+   ANY element re-themes just that subtree — handy for previewing a
+   palette on one page before rolling it out.
+   ============================================================ */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* The surface ladder, deepest first. Sections alternate along it for
+     rhythm. Each rung is stated outright rather than computed, because
+     "one step up" means lighter on dark and can mean either on light —
+     no formula gets that right for both themes. */
+  --c-void: #0a0203; /* deepest band                      */
+  --c-alt: #1a0a0c; /* alternating band                   */
+  --c-base: #120405; /* page background — oxblood black   */
+  --c-surface: #241012; /* raised panels, cards           */
+  --c-raised: #35191c; /* hovered / elevated panel        */
+
+  --c-text: #f5f0e8; /* primary text                      */
+  --c-text-soft: #b8aaa0; /* secondary text               */
+  --c-accent: #c6a15b; /* accent / gold                   */
+  --c-accent-hi: #d8b873; /* gold hover                   */
+  --c-line: #3a1a1d; /* borders                           */
+  --c-ink: #180708; /* text that sits ON the accent       */
+  --c-shadow: #000000; /* what shadows are made of        */
+
+  /* The deliberate contrast card (Young Man / Successful Man) —
+     always the OPPOSITE of the page, so it flips with the theme. */
+  --c-inverse: #f3eee3;
+  --c-inverse-text: #14120e;
+
+  /* Velvet — how the grain sits on the base. Overlay on dark keeps
+     the nap warm and creamy instead of washing it grey. */
+  --grain-opacity: 0.055;
+  --grain-blend: overlay;
+  --velvet-strength: 1;
+  --velvet-gain: 3.2; /* how far the bloom is pushed over the base */
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Same ladder, and note it does NOT simply invert: on light the deepest
+     rung is a warm cream, not a grey, and elevation is carried by white
+     plus shadow rather than by lightening. */
+  --c-void: #ece4d8;
+  --c-alt: #f3ede4;
+  --c-base: #faf7f2;
+  --c-surface: #ffffff;
+  --c-raised: #fffdf9;
+
+  --c-text: #1a0d0e;
+  --c-text-soft: #574840; /* darker than the dark theme's, to leave room
+                             for a readable muted step underneath it     */
+  --c-accent: #7d5f21; /* bright gold is 2.4:1 on cream and fails AA —
+                          the light theme uses the deep bronze instead   */
+  --c-accent-hi: #5f4a18;
+  --c-line: #e2d9cc;
+  --c-ink: #ffffff;
+  --c-shadow: #3a1a1d;
+
+  --c-inverse: #241012;
+  --c-inverse-text: #f5f0e8;
+
+  --grain-opacity: 0.035;
+  --grain-blend: multiply;
+  --velvet-strength: 0.55;
+  --velvet-gain: 2.2;
+}
+
+/* ============================================================
+   LAYER 2 — DERIVED TOKENS.  Generated from Layer 1. Do not edit.
+   ------------------------------------------------------------
+   Two helpers do the work:
+     --lift  mixes a colour toward light  (raised surfaces)
+     --sink  mixes a colour toward dark   (recessed surfaces)
+   Both read correctly in either theme: "sink" always means darker.
    ============================================================ */
 :root {
-  /* Backgrounds & surfaces */
-  --bg-void: #08080a;
-  --bg-base: #0b0b0c;
-  --bg-alt: #101012;
-  --surface-1: #141416;
-  --surface-2: #1c1c1f;
-  --surface-warm: #131210;
-  --hairline: #26241f;
-  --hairline-soft: rgba(255, 255, 255, 0.06);
-  --hairline-gold: rgba(201, 162, 75, 0.22);
-  /* Gold ramp */
-  --gold-100: #f0e6c8;
-  --gold-200: #e8d9a8;
-  --gold-300: #d9c27e;
-  --gold-500: #c9a24b; /* PRIMARY brand + CTA gold */
-  --gold-600: #a9832f;
-  --gold-700: #8a6a24;
-  --gold-900: #6e5418;
-  /* Text on dark */
-  --text-primary: #f4f1ea;
-  --text-secondary: #a7a199;
-  --text-muted: #8a847a;
-  --text-on-gold: #0b0b0c;
-  --white: #ffffff;
-  /* Light card (Young Man) */
-  --card-light-bg: #f3eee3;
-  --card-light-bg-2: #eae2d3;
-  --card-light-head: #14120e;
-  --card-light-body: #3a362f;
-  --card-light-gold: #6e5418;
-  /* WhatsApp */
+  --lift: #ffffff;
+  --sink: #000000;
+
+  /* ---- Surfaces — straight off the Layer 1 ladder ---- */
+  --bg-void: var(--c-void);
+  --bg-base: var(--c-base);
+  --bg-alt: var(--c-alt);
+  --surface-1: var(--c-surface);
+  --surface-2: var(--c-raised);
+  --surface-warm: color-mix(in srgb, var(--c-surface) 45%, var(--c-base));
+
+  /* ---- Hairlines ---- */
+  --hairline: var(--c-line);
+  --hairline-soft: color-mix(in srgb, var(--c-text) 8%, transparent);
+  --hairline-gold: color-mix(in srgb, var(--c-accent) 22%, transparent);
+
+  /* ---- Gold ramp — low numbers contrast HARD against the page,
+          high numbers sink toward it. Holds true in both themes. ---- */
+  --gold-100: color-mix(in srgb, var(--c-accent-hi) 55%, var(--c-text));
+  --gold-200: color-mix(in srgb, var(--c-accent-hi) 78%, var(--c-text));
+  --gold-300: var(--c-accent-hi);
+  --gold-500: var(--c-accent); /* PRIMARY brand + CTA gold */
+  --gold-600: color-mix(in srgb, var(--c-accent) 80%, var(--sink));
+  --gold-700: color-mix(in srgb, var(--c-accent) 62%, var(--sink));
+  --gold-900: color-mix(in srgb, var(--c-accent) 44%, var(--sink));
+
+  /* ---- Text ---- */
+  --text-primary: var(--c-text);
+  --text-secondary: var(--c-text-soft);
+  /* 85% keeps muted above 4.5:1 on the worst background it lands on
+     (surface-1 in dark, void in light). Lowering it fails AA. */
+  --text-muted: color-mix(in srgb, var(--c-text-soft) 85%, var(--c-base));
+  --text-on-gold: var(--c-ink);
+
+  /* ---- Inverse card (ivory on dark / oxblood on light) ---- */
+  --card-light-bg: var(--c-inverse);
+  --card-light-bg-2: color-mix(in srgb, var(--c-inverse) 88%, var(--sink));
+  --card-light-head: var(--c-inverse-text);
+  --card-light-body: color-mix(
+    in srgb,
+    var(--c-inverse-text) 82%,
+    var(--c-inverse)
+  );
+  --card-light-gold: color-mix(
+    in srgb,
+    var(--c-accent) 52%,
+    var(--c-inverse-text)
+  );
+
+  /* ---- Fixed brand colours (never themed) ---- */
   --wa-green: #25d366;
   --wa-green-deep: #1ebe5b;
   --wa-green-dark: #075e54;
-  /* Feedback */
   --error: #e5484d;
   --success: #3dd68c;
-  /* Gradients */
-  --grad-gold: linear-gradient(180deg, #e6d19a 0%, #c9a24b 45%, #a9832f 100%);
+
+  /* ---- Named alphas. Only values reused across rules get a name;
+          a one-off stays an inline color-mix() at the point of use,
+          where it reads better than an indirection would. ---- */
+  --accent-a08: color-mix(in srgb, var(--c-accent) 8%, transparent);
+  --accent-a55: color-mix(in srgb, var(--c-accent) 55%, transparent);
+  --scrim: color-mix(in srgb, var(--bg-void) 72%, transparent);
+  --scrim-solid: color-mix(in srgb, var(--bg-void) 98%, transparent);
+
+  /* ---- Gradients ---- */
+  --grad-gold: linear-gradient(
+    180deg,
+    var(--gold-200) 0%,
+    var(--gold-500) 45%,
+    var(--gold-600) 100%
+  );
   --grad-gold-line: linear-gradient(
     90deg,
     transparent,
-    #c9a24b 20%,
-    #e8d9a8 50%,
-    #c9a24b 80%,
+    var(--gold-500) 20%,
+    var(--gold-200) 50%,
+    var(--gold-500) 80%,
     transparent
   );
   --glow-gold-radial: radial-gradient(
     60% 50% at 50% 0%,
-    rgba(201, 162, 75, 0.1),
+    var(--accent-a08),
     transparent 70%
   );
-  --grad-card-warm: linear-gradient(155deg, #1a1712 0%, #0e0d0b 100%);
-  --grad-card-light: linear-gradient(155deg, #f3eee3 0%, #eae2d3 100%);
-  /* Elevation & motion */
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.35);
-  --glow-gold: 0 8px 30px rgba(201, 162, 75, 0.18);
-  --focus-ring: 0 0 0 3px rgba(232, 217, 168, 0.55);
+  --grad-card-warm: linear-gradient(
+    155deg,
+    var(--surface-warm) 0%,
+    var(--bg-void) 100%
+  );
+  --grad-card-light: linear-gradient(
+    155deg,
+    var(--card-light-bg) 0%,
+    var(--card-light-bg-2) 100%
+  );
+
+  /* ---- Velvet — the warm bloom that turns flat grain into nap.
+          Two soft lobes: a gold catch-light from above, and a
+          surface-toned pool rising from the lower left. ---- */
+  /* ---- Texture: pre-rasterized noise tile. Runtime SVG feTurbulence
+          cost ~1.1s of first paint at mobile DPR3 under 4x CPU
+          throttle, so the tile is baked. ---- */
+  --noise-tile: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAQAElEQVR4ATTbBZQexRIF4JrGPbjD4hAsePAEDe4QfPHgiwcP7u6a4O7uizsEdwnu7pCd11+9s++cfbv//DPdVbfuvVU9QImI9thjj20ffPDBdsUVV2w7OzvbhRdeuP3777/bo446qj3uuOPagQMHttNPP307cuTI9osvvmj32WefdrnllmuXX375tl+/fu3666/fTjfddO1LL73UHn/88e3bb7+d600xxRTtCSec0M4yyyzt+++/3+6///7t0KFD8/mll166HWOMMdqxxhqr7enpab/55pv22Wefbc8888z2iSeeaIcPH94OHjw441lppZXazTbbrL3yyivbLbfcsp1oookyrrnnnrvdd9992w033LBdaKGF2j59+rT//fdfe9JJJ7VTTTVVrrvnnnu2d9xxR7vgggvm9Z6enoz5lltuaXfccce2dHV1xZJLLhl77bVXnHzyybHHHntETTImnnjiGD58eMwwwwzR0dERs88+e9x222157ZprromHHnooatJx9tlnx88//xynn3563vvjjz/G+eefH3XD2G677XLdClK4vtNOO8Uqq6wSFcy85+ijj47VVlstNt1009hhhx3iuuuui7Zt49NPP83n5phjjqggxsMPP5z3PPLIIzHllFPGJ598EhdccEGsvPLK8eabb+a1CkqstdZacd9998X2228fP/zwQxxyyCEZwxtvvJExvvfeezHrrLNmDnfddVfcdNNNUSqKcd5558Xkk08eZ511Vhx55JFxzDHHxPzzzx9zzjlnVOTjlVdeiV122SVKKVFZEmOPPXZUpsRHH30UteLx1Vdfxeqrrx4vv/xyzDzzzBl0rWQCud5668Vkk00Wl1xySYIEsBdeeCEGDRoUiyyySIJ4ww03xPjjjx9TTz11jBgxIpZYYol455134qCDDopNNtkkC2RtP7vvvnt8/PHHURkV3377bWy88cYZ09VXXx2PPfZYVOZGZUL8/vvvoVCKKifxP/XUU7HNNtvE4MGDQzHkWFS5yiAOO+ywGHfcceOqq66KP/74Iyq9Y/PNN49ffvkl1lxzzRC0pP76668EQJAqPOGEE0b//v2j0jQT+PzzzxPlSu1kjABVWRU7Ozvjs88+i9tvvz2BBeipp54aVWZ5L7Zhy2WXXRaV2gm6ygJvyJAhGc8CCywQ3333XTIJAzDn+eefT5YA4Nprr00GjR49Oqo0Y8YZZ4wqyWTDBx98EP/880+y7eKLL4411lgjStVzJgvVe+65J6td9ZkssPBcc80Vv/76a1SfyIWhKohdd901qu5inHHGyUq8++67uRnaovkyyywTnkfzF198MbAEyCqtCu6peo1BlQlA6e7uzuAEvPbaa8fee++d+2299dZRvScw6fXXX8893Y8BkiQf0iFblSZdRZl00kmzmM8880w+/+qrr8ahhx6aYFf/in///TfOPffcKIKq5hUSovOvv/46NURrEL7xxhuTSjZFX7rv6upKrVoQSyy23377pS+QE+q+9dZb0V2T6qj+seiiiybaABs4cGDYQ/CCvfzyy1Na1eCSGah8xRVXpGZ5jkphHRaRB/Z8//33KTPx9vT0ZKUvvfTSePTRR8N3fIQX8IkDDjggrO17wNiPjMRNvgXtn3vuuYBUdc7o27dv0olxQBbt55tvvrj11ltjqaWWSqMBzrbbbhtPP/10HHjggTHBBBMEpkgWVVWtumyQQXXkNDD3YBkZDBgwIA2XPumexP7888/gR1hBApg5atSoTMjeCkUyq666atx7772x8847Z6wkQsKekbxkMYjR8ijx1S6QPoTJmMoggUfm5Ywzzgjo3HnnnenUgq9tK51aFVVUFZqmCQgyJVr68ssv040FrGqcd5555kltAhUdoay7bLXVVgkwwNBONQ8//PD0FaAyW6aHxiokMNJijtbAFj98oWmaqK0wTZp/kZJ4JCa2n376KexnH0BbXwcCGn8RF59wD6MsaM3BP/zww6h9OrQHD/qMopCFmBbCfFSm9t1QSRVV4WWXXTZOOeWU9BK0v/7668PvOlsE9Lm3IASlgp4555xzYosttgjgSuD+++8PSdA2apKJdshLGBfZMVK/Dz744MBW7CRfRrj44ovH448/HnV2Sa3TOUDEoj0qFNfXkcSAsXym+D9uCXW0HlDpSTtopfpazWuvvZY6VQU9Hv3GG2+80Fa4OGT79OkT3FYyWERKnkO7E088MTbaaKPsNCot4JtvvjlZQX50zIPEQgYYoecPGzYsE+U1o6ocJOcHmIxVgio6YsSINFx9XWK8QDzMlh/Yi7EDGVuxiqwUtOjbDExvb5omBwvBQh+q/WuLgxpX1QrrZJcOimqeO+KI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");
+
+  --velvet-bloom: radial-gradient(
+      120% 80% at 50% -10%,
+      color-mix(
+        in srgb,
+        var(--c-accent) calc(12% * var(--velvet-strength)),
+        transparent
+      ),
+      transparent 60%
+    ),
+    radial-gradient(
+      90% 75% at 12% 108%,
+      color-mix(
+        in srgb,
+        var(--c-surface) calc(65% * var(--velvet-strength)),
+        transparent
+      ),
+      transparent 68%
+    );
+
+  /* ---- Elevation ---- */
+  --shadow-card: 0 1px 2px color-mix(in srgb, var(--c-shadow) 40%, transparent),
+    0 10px 30px color-mix(in srgb, var(--c-shadow) 35%, transparent);
+  --shadow-pop: 0 6px 24px color-mix(in srgb, var(--c-shadow) 45%, transparent);
+  --glow-gold: 0 8px 30px color-mix(in srgb, var(--c-accent) 18%, transparent);
+  --focus-ring: 0 0 0 3px var(--accent-a55);
+
+  /* ---- Motion & layout (theme-independent) ---- */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-  /* Layout constants */
   --header-h: 68px;
 }
 
-/* Map tokens into Tailwind v4 so agents get utilities like
-   bg-void, bg-surface-1, text-gold-500, border-hairline-gold, font-display */
+/* ============================================================
+   LAYER 3 — TAILWIND UTILITIES.  Maps tokens onto class names.
+   Semantic names (bg-surface, text-accent, border-line) are the
+   ones to write in new markup; the older literal names are kept
+   so every existing page keeps working unchanged.
+   ============================================================ */
 @theme inline {
+  /* semantic — prefer these in new markup */
+  --color-surface: var(--surface-1);
+  --color-accent: var(--gold-500);
+  --color-accent-hi: var(--gold-300);
+  --color-ink: var(--text-on-gold);
+  --color-line: var(--hairline);
+  --color-line-soft: var(--hairline-soft);
+  --color-line-accent: var(--hairline-gold);
+  --color-inverse: var(--card-light-bg);
+  --color-inverse-text: var(--card-light-head);
+
+  /* literal names — kept for the pages already using them */
   --color-void: var(--bg-void);
   --color-base: var(--bg-base);
   --color-alt: var(--bg-alt);
@@ -100,6 +274,7 @@
   --color-wa-dark: var(--wa-green-dark);
   --color-error: var(--error);
   --color-success: var(--success);
+
   --font-display: var(--font-fraunces), Georgia, serif;
   --font-body: var(--font-inter), system-ui, sans-serif;
   --breakpoint-nav: 56.25rem; /* 900px — header collapse point */
@@ -124,7 +299,7 @@ body {
 }
 
 ::selection {
-  background: rgba(201, 162, 75, 0.35);
+  background: color-mix(in srgb, var(--c-accent) calc(0.35 * 100%), transparent);
   color: var(--text-primary);
 }
 
@@ -277,24 +452,41 @@ h3,
   contain-intrinsic-size: auto 640px;
 }
 
-/* Subtle film grain on large dark fills (kills OLED banding; keep off live text) */
-.grain {
+/* ---- Grain & velvet ------------------------------------------------
+   .grain   fine noise over a fill — kills OLED banding on large darks.
+   .velvet  grain PLUS a warm directional bloom. The noise alone reads
+            as dust; the bloom gives it a nap, so the base colour looks
+            like fabric catching light instead of flat paint. Use .velvet
+            INSTEAD of .grain (not alongside) on showpiece sections.
+   Both are theme-driven: opacity, blend mode and bloom strength all
+   come from Layer 1, so a palette swap re-tunes the texture with it. */
+.grain,
+.velvet {
   position: relative;
   isolation: isolate;
 }
-.grain::after {
+.grain::after,
+.velvet::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.03;
-  /* pre-rasterized noise tile — runtime SVG feTurbulence cost ~1.1s of
-     first paint at mobile DPR3 under 4x CPU throttle (LCP killer) */
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAQAElEQVR4ATTbBZQexRIF4JrGPbjD4hAsePAEDe4QfPHgiwcP7u6a4O7uizsEdwnu7pCd11+9s++cfbv//DPdVbfuvVU9QImI9thjj20ffPDBdsUVV2w7OzvbhRdeuP3777/bo446qj3uuOPagQMHttNPP307cuTI9osvvmj32WefdrnllmuXX375tl+/fu3666/fTjfddO1LL73UHn/88e3bb7+d600xxRTtCSec0M4yyyzt+++/3+6///7t0KFD8/mll166HWOMMdqxxhqr7enpab/55pv22Wefbc8888z2iSeeaIcPH94OHjw441lppZXazTbbrL3yyivbLbfcsp1oookyrrnnnrvdd9992w033LBdaKGF2j59+rT//fdfe9JJJ7VTTTVVrrvnnnu2d9xxR7vgggvm9Z6enoz5lltuaXfccce2dHV1xZJLLhl77bVXnHzyybHHHntETTImnnjiGD58eMwwwwzR0dERs88+e9x222157ZprromHHnooatJx9tlnx88//xynn3563vvjjz/G+eefH3XD2G677XLdClK4vtNOO8Uqq6wSFcy85+ijj47VVlstNt1009hhhx3iuuuui7Zt49NPP83n5phjjqggxsMPP5z3PPLIIzHllFPGJ598EhdccEGsvPLK8eabb+a1CkqstdZacd9998X2228fP/zwQxxyyCEZwxtvvJExvvfeezHrrLNmDnfddVfcdNNNUSqKcd5558Xkk08eZ511Vhx55JFxzDHHxPzzzx9zzjlnVOTjlVdeiV122SVKKVFZEmOPPXZUpsRHH30UteLx1Vdfxeqrrx4vv/xyzDzzzBl0rWQCud5668Vkk00Wl1xySYIEsBdeeCEGDRoUiyyySIJ4ww03xPjjjx9TTz11jBgxIpZYYol455134qCDDopNNtkkC2RtP7vvvnt8/PHHURkV3377bWy88cYZ09VXXx2PPfZYVOZGZUL8/vvvoVCKKifxP/XUU7HNNtvE4MGDQzHkWFS5yiAOO+ywGHfcceOqq66KP/74Iyq9Y/PNN49ffvkl1lxzzRC0pP76668EQJAqPOGEE0b//v2j0jQT+PzzzxPlSu1kjABVWRU7Ozvjs88+i9tvvz2BBeipp54aVWZ5L7Zhy2WXXRaV2gm6ygJvyJAhGc8CCywQ3333XTIJAzDn+eefT5YA4Nprr00GjR49Oqo0Y8YZZ4wqyWTDBx98EP/880+y7eKLL4411lgjStVzJgvVe+65J6td9ZkssPBcc80Vv/76a1SfyIWhKohdd901qu5inHHGyUq8++67uRnaovkyyywTnkfzF198MbAEyCqtCu6peo1BlQlA6e7uzuAEvPbaa8fee++d+2299dZRvScw6fXXX8893Y8BkiQf0iFblSZdRZl00kmzmM8880w+/+qrr8ahhx6aYFf/in///TfOPffcKIKq5hUSovOvv/46NURrEL7xxhuTSjZFX7rv6upKrVoQSyy23377pS+QE+q+9dZb0V2T6qj+seiiiybaABs4cGDYQ/CCvfzyy1Na1eCSGah8xRVXpGZ5jkphHRaRB/Z8//33KTPx9vT0ZKUvvfTSePTRR8N3fIQX8IkDDjggrO17wNiPjMRNvgXtn3vuuYBUdc7o27dv0olxQBbt55tvvrj11ltjqaWWSqMBzrbbbhtPP/10HHjggTHBBBMEpkgWVVWtumyQQXXkNDD3YBkZDBgwIA2XPumexP7888/gR1hBApg5atSoTMjeCkUyq666atx7772x8847Z6wkQsKekbxkMYjR8ijx1S6QPoTJmMoggUfm5Ywzzgjo3HnnnenUgq9tK51aFVVUFZqmCQgyJVr68ssv040FrGqcd5555kltAhUdoay7bLXVVgkwwNBONQ8//PD0FaAyW6aHxiokMNJijtbAFj98oWmaqK0wTZp/kZJ4JCa2n376KexnH0BbXwcCGn8RF59wD6MsaM3BP/zww6h9OrQHD/qMopCFmBbCfFSm9t1QSRVV4WWXXTZOOeWU9BK0v/7668PvOlsE9Lm3IASlgp4555xzYosttgjgSuD+++8PSdA2apKJdshLGBfZMVK/Dz744MBW7CRfRrj44ovH448/HnV2Sa3TOUDEoj0qFNfXkcSAsXym+D9uCXW0HlDpSTtopfpazWuvvZY6VQU9Hv3GG2+80Fa4OGT79OkT3FYyWERKnkO7E088MTbaaKPsNCot4JtvvjlZQX50zIPEQgYYoecPGzYsE+U1o6ocJOcHmIxVgio6YsSINFx9XWK8QDzMlh/Yi7EDGVuxiqwUtOjbDExvb5omBwvBQh+q/WuLgxpX1QrrZJcOimqeO+KI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");
+  opacity: var(--grain-opacity);
+  background-image: var(--noise-tile);
   background-size: 64px 64px;
 }
-
+/* Note the blend is background-blend-mode, NOT mix-blend-mode: the parent
+   isolates, so a mix-blend layer would have nothing to blend against and
+   the effect would silently disappear. Blending the noise INTO the bloom
+   inside the same box works regardless — and it is what actually makes
+   the texture read as fabric rather than as dust laid on top. */
+.velvet::after {
+  background-image: var(--noise-tile), var(--velvet-bloom);
+  background-size: 64px 64px, cover;
+  background-blend-mode: var(--grain-blend), normal;
+  opacity: calc(var(--grain-opacity) * var(--velvet-gain));
+}
 /* Restrained radial gold glow (hero + final CTA bands) */
 .glow-top {
   background-image: var(--glow-gold-radial);
@@ -317,12 +509,12 @@ h3,
   letter-spacing: 0.02em;
   color: var(--text-on-gold);
   background: var(--grad-gold);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid color-mix(in srgb, var(--lift) calc(0.25 * 100%), transparent);
   border-radius: 10px;
   padding: 16px 28px;
   min-height: 52px;
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 1px 0 color-mix(in srgb, var(--lift) calc(0.15 * 100%), transparent) inset,
     var(--glow-gold);
   transition:
     transform 0.2s,
@@ -338,11 +530,11 @@ h3,
 .btn-gold:hover {
   transform: translateY(-1px);
   box-shadow:
-    0 0 0 1px rgba(201, 162, 75, 0.5),
-    0 10px 34px rgba(201, 162, 75, 0.24);
+    0 0 0 1px color-mix(in srgb, var(--c-accent) calc(0.5 * 100%), transparent),
+    0 10px 34px color-mix(in srgb, var(--c-accent) calc(0.24 * 100%), transparent);
 }
 .btn-gold:active {
-  background: #a9832f;
+  background: var(--gold-600);
   transform: translateY(0);
 }
 .btn-gold:focus-visible {
@@ -359,7 +551,7 @@ h3,
   font: 600 1rem/1 var(--font-inter);
   color: var(--text-primary);
   background: transparent;
-  border: 1.5px solid rgba(244, 241, 234, 0.6);
+  border: 1.5px solid color-mix(in srgb, var(--c-text) calc(0.6 * 100%), transparent);
   border-radius: 10px;
   padding: 16px 28px;
   min-height: 52px;
@@ -375,9 +567,9 @@ h3,
   cursor: pointer;
 }
 .btn-outline:hover {
-  border-color: #f4f1ea;
-  background: rgba(244, 241, 234, 0.06);
-  color: #fff;
+  border-color: var(--c-text);
+  background: color-mix(in srgb, var(--c-text) calc(0.06 * 100%), transparent);
+  color: var(--c-text);
 }
 .btn-outline:focus-visible {
   outline: none;
@@ -460,7 +652,7 @@ h3,
 .card-light {
   background: var(--grad-card-light);
   color: var(--card-light-body);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid color-mix(in srgb, var(--c-inverse-text) 8%, transparent);
   border-radius: 16px;
   box-shadow: var(--shadow-card);
   padding: 24px;
@@ -481,7 +673,7 @@ h3,
 .card-dark-gold {
   position: relative;
   background: var(--grad-card-warm);
-  color: #e8e2d6;
+  color: var(--gold-100);
   border: 1px solid var(--hairline-gold);
   border-radius: 16px;
   box-shadow: var(--shadow-card);
@@ -515,12 +707,12 @@ h3,
 
 /* Featured card — the featured Discovery offer */
 .card-featured {
-  border-color: rgba(201, 162, 75, 0.45);
+  border-color: color-mix(in srgb, var(--c-accent) calc(0.45 * 100%), transparent);
   box-shadow: var(--shadow-card), var(--glow-gold);
 }
 @media (hover: hover) {
   .card-featured:hover {
-    border-color: rgba(201, 162, 75, 0.65);
+    border-color: color-mix(in srgb, var(--c-accent) calc(0.65 * 100%), transparent);
   }
 }
 
@@ -560,7 +752,7 @@ h3,
   top: 0;
   z-index: 100;
   height: var(--header-h);
-  background: rgba(11, 11, 12, 0.72);
+  background: var(--scrim);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid transparent;
@@ -699,7 +891,7 @@ h3,
   position: fixed;
   inset: 0;
   z-index: 150;
-  background: rgba(8, 8, 10, 0.98);
+  background: var(--scrim-solid);
   display: flex;
   flex-direction: column;
   padding: 0 20px 32px;
@@ -784,7 +976,7 @@ h3,
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-pop);
   opacity: 0;
   transform: scale(0.4);
 }
@@ -818,7 +1010,7 @@ h3,
 }
 .wa-fab:focus-visible {
   outline: none;
-  box-shadow: var(--focus-ring), 0 6px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--focus-ring), var(--shadow-pop);
 }
 .wa-label {
   display: none;
@@ -916,9 +1108,9 @@ h3,
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(42% 34% at 22% 18%, rgba(201, 162, 75, 0.09), transparent 70%),
-    radial-gradient(36% 30% at 82% 60%, rgba(201, 162, 75, 0.06), transparent 70%),
-    radial-gradient(50% 42% at 55% 105%, rgba(138, 106, 36, 0.07), transparent 72%);
+    radial-gradient(42% 34% at 22% 18%, color-mix(in srgb, var(--c-accent) calc(0.09 * 100%), transparent), transparent 70%),
+    radial-gradient(36% 30% at 82% 60%, color-mix(in srgb, var(--c-accent) calc(0.06 * 100%), transparent), transparent 70%),
+    radial-gradient(50% 42% at 55% 105%, color-mix(in srgb, var(--gold-700) calc(0.07 * 100%), transparent), transparent 72%);
 }
 @media (prefers-reduced-motion: no-preference) {
   .aurora::before {
@@ -942,14 +1134,14 @@ h3,
   letter-spacing: -0.03em;
   text-transform: uppercase;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(201, 162, 75, 0.08);
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--c-accent) calc(0.08 * 100%), transparent);
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
 }
 .ghost-word.filled {
   -webkit-text-stroke: 0;
-  color: rgba(244, 241, 234, 0.028);
+  color: color-mix(in srgb, var(--c-text) calc(0.028 * 100%), transparent);
 }
 
 /* ---- The gold thread: lines that draw themselves as you scroll ---- */
@@ -1146,11 +1338,11 @@ h3,
   font: 500 clamp(1.5rem, 4vw, 2.75rem) / 1.1 var(--font-fraunces);
   letter-spacing: -0.01em;
   /* 42% ivory ≈ 3.75:1 on the void — clears AA large-text with margin */
-  color: rgba(244, 241, 234, 0.42);
+  color: color-mix(in srgb, var(--c-text) calc(0.42 * 100%), transparent);
   white-space: nowrap;
 }
 .marquee-item .tick {
-  color: rgba(201, 162, 75, 0.6);
+  color: color-mix(in srgb, var(--c-accent) calc(0.6 * 100%), transparent);
   font-size: 0.5em;
 }
 
@@ -1169,7 +1361,7 @@ h3,
   background: linear-gradient(
     105deg,
     transparent,
-    rgba(255, 255, 255, 0.42) 50%,
+    color-mix(in srgb, var(--lift) calc(0.42 * 100%), transparent) 50%,
     transparent
   );
   transform: translateX(-120%) skewX(-18deg);
@@ -1187,7 +1379,7 @@ h3,
 }
 
 .text-gold-grad {
-  background: linear-gradient(100deg, #e8d9a8 0%, #c9a24b 45%, #e6d19a 80%);
+  background: linear-gradient(100deg, var(--gold-200) 0%, var(--gold-500) 45%, var(--gold-300) 80%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1202,10 +1394,10 @@ h3,
 @keyframes featured-breathe {
   0%,
   100% {
-    box-shadow: var(--shadow-card), 0 8px 30px rgba(201, 162, 75, 0.14);
+    box-shadow: var(--shadow-card), 0 8px 30px color-mix(in srgb, var(--c-accent) calc(0.14 * 100%), transparent);
   }
   50% {
-    box-shadow: var(--shadow-card), 0 10px 44px rgba(201, 162, 75, 0.26);
+    box-shadow: var(--shadow-card), 0 10px 44px color-mix(in srgb, var(--c-accent) calc(0.26 * 100%), transparent);
   }
 }
 
@@ -1225,7 +1417,7 @@ h3,
   transition: opacity 0.35s var(--ease-standard);
   background: radial-gradient(
     340px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(201, 162, 75, 0.09),
+    color-mix(in srgb, var(--c-accent) calc(0.09 * 100%), transparent),
     transparent 65%
   );
 }
@@ -1244,7 +1436,7 @@ h3,
 .card-dark-gold {
   background-image: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.028),
+    color-mix(in srgb, var(--lift) calc(0.028 * 100%), transparent),
     transparent 42%
   );
 }
@@ -1280,7 +1472,7 @@ h3,
   bottom: 0;
   height: 2px;
   border-radius: 2px;
-  background: rgba(201, 162, 75, 0.55);
+  background: color-mix(in srgb, var(--c-accent) calc(0.55 * 100%), transparent);
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform 0.3s var(--ease-out-expo);
@@ -1318,7 +1510,7 @@ h3,
   border-radius: 999px;
   background: radial-gradient(
     circle,
-    rgba(201, 162, 75, 0.055),
+    color-mix(in srgb, var(--c-accent) calc(0.055 * 100%), transparent),
     transparent 62%
   );
   mix-blend-mode: screen;
@@ -1364,7 +1556,7 @@ h3,
 /* ---- Scrollbar (desktop, WebKit + Firefox) ---- */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(201, 162, 75, 0.35) var(--bg-void);
+  scrollbar-color: color-mix(in srgb, var(--c-accent) calc(0.35 * 100%), transparent) var(--bg-void);
 }
 ::-webkit-scrollbar {
   width: 10px;
@@ -1373,14 +1565,14 @@ h3,
   background: var(--bg-void);
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(201, 162, 75, 0.4), rgba(138, 106, 36, 0.4));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c-accent) calc(0.4 * 100%), transparent), color-mix(in srgb, var(--gold-700) calc(0.4 * 100%), transparent));
   border-radius: 8px;
   border: 2px solid var(--bg-void);
 }
 
 /* ---- Header 2.0: scrolled state gains a gold hairline + tighter wordmark ---- */
 .site-header.scrolled {
-  box-shadow: 0 1px 0 rgba(201, 162, 75, 0.14);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--c-accent) calc(0.14 * 100%), transparent);
 }
 .wordmark {
   transition: transform 0.3s var(--ease-standard);
@@ -1406,7 +1598,7 @@ h3,
   background: linear-gradient(
     105deg,
     transparent,
-    rgba(255, 255, 255, 0.38) 50%,
+    color-mix(in srgb, var(--lift) calc(0.38 * 100%), transparent) 50%,
     transparent
   );
   transform: translateX(-140%) skewX(-18deg);
@@ -1567,7 +1759,7 @@ h3,
   pointer-events: none;
   background: radial-gradient(
     50% 50% at 50% 52%,
-    rgba(201, 162, 75, 0.22),
+    color-mix(in srgb, var(--c-accent) calc(0.22 * 100%), transparent),
     transparent 70%
   );
   filter: blur(4px);
@@ -1584,13 +1776,13 @@ h3,
   gap: 18px;
   min-width: min(100%, 300px);
   padding: 14px 22px;
-  border: 1px solid rgba(201, 162, 75, 0.22);
+  border: 1px solid color-mix(in srgb, var(--c-accent) calc(0.22 * 100%), transparent);
   border-left: 3px solid var(--gold-500);
   border-radius: 10px;
   background: linear-gradient(
     180deg,
-    rgba(201, 162, 75, 0.05),
-    rgba(8, 8, 10, 0.6)
+    color-mix(in srgb, var(--c-accent) calc(0.05 * 100%), transparent),
+    color-mix(in srgb, var(--bg-void) calc(0.6 * 100%), transparent)
   );
   text-align: left;
 }
@@ -1600,8 +1792,8 @@ h3,
   opacity: 0.85;
 }
 .fb-featured {
-  border-color: rgba(201, 162, 75, 0.55);
-  box-shadow: 0 0 42px rgba(201, 162, 75, 0.09);
+  border-color: color-mix(in srgb, var(--c-accent) calc(0.55 * 100%), transparent);
+  box-shadow: 0 0 42px color-mix(in srgb, var(--c-accent) calc(0.09 * 100%), transparent);
 }
 @media (prefers-reduced-motion: no-preference) {
   .fb-enter {

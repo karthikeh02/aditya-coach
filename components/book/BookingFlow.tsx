@@ -449,7 +449,7 @@ export default function BookingFlow() {
             as one continuous line to the signature. */}
         <div className="relative">
           {/* ---------- §1 HERO (tight, single-column, conversion-first) ---------- */}
-          <section className="section aurora grain relative overflow-hidden">
+          <section className="section aurora velvet relative overflow-hidden">
           <div className="container-site">
             <div className="mx-auto max-w-[62ch] text-center">
               {/* IMG_BOOK_HERO intentionally omitted — hero is pure type on
@@ -583,9 +583,9 @@ export default function BookingFlow() {
                     x2="1"
                     y2="1"
                   >
-                    <stop offset="0%" stopColor="#e8d9a8" />
-                    <stop offset="45%" stopColor="#c9a24b" />
-                    <stop offset="100%" stopColor="#f0e6c8" />
+                    <stop offset="0%" className="[stop-color:var(--gold-200)]" />
+                    <stop offset="45%" className="[stop-color:var(--gold-500)]" />
+                    <stop offset="100%" className="[stop-color:var(--gold-100)]" />
                   </linearGradient>
                 </defs>
               </svg>
@@ -916,7 +916,7 @@ export default function BookingFlow() {
                         width={180}
                         height={40}
                         alt="Secured by Razorpay"
-                        style={{ borderRadius: 8 }}
+                        className="rounded-lg"
                       />
                     </div>
                   </div>
@@ -988,7 +988,7 @@ export default function BookingFlow() {
 
       {/* ============ STATE B + C (the §6 banner persists into C) ============ */}
       <div hidden={stateA} aria-hidden={stateA}>
-        <section className="section aurora grain relative overflow-hidden">
+        <section className="section aurora velvet relative overflow-hidden">
           <div className="container-site">
             <div className="mx-auto max-w-[720px]">
               <div ref={postPayRef}>

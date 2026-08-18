@@ -10,6 +10,8 @@ import FxController from "@/components/FxController";
 import JsonLd from "@/components/JsonLd";
 import { businessSchema, personSchema } from "@/lib/schema";
 import { SITE_NAME, SITE_ORIGIN } from "@/lib/site";
+import { THEME } from "@/lib/theme";
+import ThemeScript from "@/components/ThemeScript";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -53,8 +55,14 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0B0B0C",
-  colorScheme: "dark",
+  // Address-bar tint follows the palette the visitor actually gets.
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: THEME.light },
+    { media: "(prefers-color-scheme: dark)", color: THEME.dark },
+  ],
+  // "dark light" = both supported, dark preferred. Native scrollbars and form
+  // controls follow the resolved theme instead of being pinned dark.
+  colorScheme: "dark light",
 };
 
 export default function RootLayout({
@@ -66,8 +74,12 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
+      // ThemeScript stamps data-theme here before paint, so the server HTML and
+      // the first client render legitimately differ on this one attribute.
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-base text-primary">
+        <ThemeScript />
         <a href="#main" className="skip-link">
           Skip to content
         </a>
