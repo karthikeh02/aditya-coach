@@ -43,12 +43,10 @@
   --c-inverse: #f3eee3;
   --c-inverse-text: #14120e;
 
-  /* Velvet — how the grain sits on the base. Overlay on dark keeps
-     the nap warm and creamy instead of washing it grey. */
-  --grain-opacity: 0.055;
-  --grain-blend: overlay;
+  /* Texture. Grain stays faint on purpose — see the note by .grain.
+     velvet-strength scales the sheen lobes only. */
+  --grain-opacity: 0.04;
   --velvet-strength: 1;
-  --velvet-gain: 3.2; /* how far the bloom is pushed over the base */
 }
 
 [data-theme="light"] {
@@ -76,10 +74,8 @@
   --c-inverse: #241012;
   --c-inverse-text: #f5f0e8;
 
-  --grain-opacity: 0.035;
-  --grain-blend: multiply;
+  --grain-opacity: 0.028;
   --velvet-strength: 0.55;
-  --velvet-gain: 2.2;
 }
 
 /* ============================================================
@@ -194,23 +190,26 @@
           throttle, so the tile is baked. ---- */
   --noise-tile: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAQAElEQVR4ATTbBZQexRIF4JrGPbjD4hAsePAEDe4QfPHgiwcP7u6a4O7uizsEdwnu7pCd11+9s++cfbv//DPdVbfuvVU9QImI9thjj20ffPDBdsUVV2w7OzvbhRdeuP3777/bo446qj3uuOPagQMHttNPP307cuTI9osvvmj32WefdrnllmuXX375tl+/fu3666/fTjfddO1LL73UHn/88e3bb7+d600xxRTtCSec0M4yyyzt+++/3+6///7t0KFD8/mll166HWOMMdqxxhqr7enpab/55pv22Wefbc8888z2iSeeaIcPH94OHjw441lppZXazTbbrL3yyivbLbfcsp1oookyrrnnnrvdd9992w033LBdaKGF2j59+rT//fdfe9JJJ7VTTTVVrrvnnnu2d9xxR7vgggvm9Z6enoz5lltuaXfccce2dHV1xZJLLhl77bVXnHzyybHHHntETTImnnjiGD58eMwwwwzR0dERs88+e9x222157ZprromHHnooatJx9tlnx88//xynn3563vvjjz/G+eefH3XD2G677XLdClK4vtNOO8Uqq6wSFcy85+ijj47VVlstNt1009hhhx3iuuuui7Zt49NPP83n5phjjqggxsMPP5z3PPLIIzHllFPGJ598EhdccEGsvPLK8eabb+a1CkqstdZacd9998X2228fP/zwQxxyyCEZwxtvvJExvvfeezHrrLNmDnfddVfcdNNNUSqKcd5558Xkk08eZ511Vhx55JFxzDHHxPzzzx9zzjlnVOTjlVdeiV122SVKKVFZEmOPPXZUpsRHH30UteLx1Vdfxeqrrx4vv/xyzDzzzBl0rWQCud5668Vkk00Wl1xySYIEsBdeeCEGDRoUiyyySIJ4ww03xPjjjx9TTz11jBgxIpZYYol455134qCDDopNNtkkC2RtP7vvvnt8/PHHURkV3377bWy88cYZ09VXXx2PPfZYVOZGZUL8/vvvoVCKKifxP/XUU7HNNtvE4MGDQzHkWFS5yiAOO+ywGHfcceOqq66KP/74Iyq9Y/PNN49ffvkl1lxzzRC0pP76668EQJAqPOGEE0b//v2j0jQT+PzzzxPlSu1kjABVWRU7Ozvjs88+i9tvvz2BBeipp54aVWZ5L7Zhy2WXXRaV2gm6ygJvyJAhGc8CCywQ3333XTIJAzDn+eefT5YA4Nprr00GjR49Oqo0Y8YZZ4wqyWTDBx98EP/880+y7eKLL4411lgjStVzJgvVe+65J6td9ZkssPBcc80Vv/76a1SfyIWhKohdd901qu5inHHGyUq8++67uRnaovkyyywTnkfzF198MbAEyCqtCu6peo1BlQlA6e7uzuAEvPbaa8fee++d+2299dZRvScw6fXXX8893Y8BkiQf0iFblSZdRZl00kmzmM8880w+/+qrr8ahhx6aYFf/in///TfOPffcKIKq5hUSovOvv/46NURrEL7xxhuTSjZFX7rv6upKrVoQSyy23377pS+QE+q+9dZb0V2T6qj+seiiiybaABs4cGDYQ/CCvfzyy1Na1eCSGah8xRVXpGZ5jkphHRaRB/Z8//33KTPx9vT0ZKUvvfTSePTRR8N3fIQX8IkDDjggrO17wNiPjMRNvgXtn3vuuYBUdc7o27dv0olxQBbt55tvvrj11ltjqaWWSqMBzrbbbhtPP/10HHjggTHBBBMEpkgWVVWtumyQQXXkNDD3YBkZDBgwIA2XPumexP7888/gR1hBApg5atSoTMjeCkUyq666atx7772x8847Z6wkQsKekbxkMYjR8ijx1S6QPoTJmMoggUfm5Ywzzgjo3HnnnenUgq9tK51aFVVUFZqmCQgyJVr68ssv040FrGqcd5555kltAhUdoay7bLXVVgkwwNBONQ8//PD0FaAyW6aHxiokMNJijtbAFj98oWmaqK0wTZp/kZJ4JCa2n376KexnH0BbXwcCGn8RF59wD6MsaM3BP/zww6h9OrQHD/qMopCFmBbCfFSm9t1QSRVV4WWXXTZOOeWU9BK0v/7668PvOlsE9Lm3IASlgp4555xzYosttgjgSuD+++8PSdA2apKJdshLGBfZMVK/Dz744MBW7CRfRrj44ovH448/HnV2Sa3TOUDEoj0qFNfXkcSAsXym+D9uCXW0HlDpSTtopfpazWuvvZY6VQU9Hv3GG2+80Fa4OGT79OkT3FYyWERKnkO7E088MTbaaKPsNCot4JtvvjlZQX50zIPEQgYYoecPGzYsE+U1o6ocJOcHmIxVgio6YsSINFx9XWK8QDzMlh/Yi7EDGVuxiqwUtOjbDExvb5omBwvBQh+q/WuLgxpX1QrrZJcOimqeO+KI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");
 
+  /* Two small lobes, deliberately weak. A wide strong lobe does not read as
+     sheen — it just lifts the whole band off the page colour and looks like
+     a mistake. Keep both under ~25% and well short of the section edges. */
   --velvet-bloom: radial-gradient(
-      120% 80% at 50% -10%,
+      70% 45% at 50% -8%,
       color-mix(
         in srgb,
-        var(--c-accent) calc(12% * var(--velvet-strength)),
+        var(--c-accent) calc(5% * var(--velvet-strength)),
         transparent
       ),
-      transparent 60%
+      transparent 70%
     ),
     radial-gradient(
-      90% 75% at 12% 108%,
+      55% 45% at 8% 105%,
       color-mix(
         in srgb,
-        var(--c-surface) calc(65% * var(--velvet-strength)),
+        var(--c-surface) calc(22% * var(--velvet-strength)),
         transparent
       ),
-      transparent 68%
+      transparent 72%
     );
 
   /* ---- Elevation ---- */
@@ -465,6 +464,9 @@ h3,
   position: relative;
   isolation: isolate;
 }
+/* Noise only, at grain strength, and nothing else. The 64px tile stays
+   invisible only while it is faint — past roughly 0.06 the repeat grid
+   itself becomes the pattern you notice, which reads as a mesh. */
 .grain::after,
 .velvet::after {
   content: "";
@@ -476,16 +478,15 @@ h3,
   background-image: var(--noise-tile);
   background-size: 64px 64px;
 }
-/* Note the blend is background-blend-mode, NOT mix-blend-mode: the parent
-   isolates, so a mix-blend layer would have nothing to blend against and
-   the effect would silently disappear. Blending the noise INTO the bloom
-   inside the same box works regardless — and it is what actually makes
-   the texture read as fabric rather than as dust laid on top. */
-.velvet::after {
-  background-image: var(--noise-tile), var(--velvet-bloom);
-  background-size: 64px 64px, cover;
-  background-blend-mode: var(--grain-blend), normal;
-  opacity: calc(var(--grain-opacity) * var(--velvet-gain));
+/* The bloom is painted on the element itself rather than stacked into
+   ::after, so its strength tunes independently of the noise — one shared
+   opacity cannot serve both (the level that makes a bloom visible is the
+   level that makes the noise tile show its repeat grid). It cannot use
+   its own ::before either: .aurora already owns that at z-index -2. */
+.velvet {
+  background-image: var(--velvet-bloom);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 /* Restrained radial gold glow (hero + final CTA bands) */
 .glow-top {
